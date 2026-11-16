@@ -160,6 +160,9 @@ export default function MapView({ gaz, a, b, activity, focus, onPick, padRight, 
     if (pb) {
       const line = greatCircle([pa.lon, pa.lat], [pb.lon, pb.lat], 16);
       const bounds = line.reduce((bb, c) => bb.extend(c), new maplibregl.LngLatBounds(line[0], line[0]));
+      // marge pour que les deux territoires restent entièrement visibles, pas seulement leurs centres
+      const sw = bounds.getSouthWest(), ne = bounds.getNorthEast();
+      bounds.extend([sw.lng - 14, Math.max(sw.lat - 10, -80)]).extend([ne.lng + 14, Math.min(ne.lat + 6, 84)]);
       m.fitBounds(bounds, { padding, maxZoom: 5, duration: 900 });
     } else if (pa.type === 'continent') m.flyTo({ center: [pa.lon, pa.lat], zoom: pa.id === 'k:europe' ? 3 : 2.4, padding, duration: 900 });
     else m.flyTo({ center: [pa.lon, pa.lat], zoom: Math.max(m.getZoom(), zoomFor(pa)), padding, duration: 900 });

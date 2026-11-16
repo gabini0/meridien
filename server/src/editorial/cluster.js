@@ -1,6 +1,6 @@
 // Regroupement des articles traitant d'un même événement, et calcul du niveau d'importance.
 // Le recoupement compte les GROUPES éditoriaux distincts, pas le nombre d'articles.
-const STOP = new Set(('the a an and or of to in on for with from by at as is are was were be been has have had will would after before over into amid says say said new more than its his her their this that who what how why not but out up about against ' +
+const STOP = new Set(('the a an and or of to in on for with from by at as is are was were be been has have had will would after before over into amid says say said new more than its his her their this that who what how why when where expect upcoming amid live latest not but out up about against ' +
   'le la les un une des du de et ou au aux en dans sur pour avec par ce cette ces son sa ses leur leurs qui que quoi est sont été être a ont après avant plus moins pas ne se sa selon face entre vers chez dont mais comme').split(' '));
 
 export function tokens(title) {
@@ -8,13 +8,22 @@ export function tokens(title) {
   return [...new Set(s.split(/[^\p{L}\p{N}]+/u).filter((w) => w.length >= 3 && !STOP.has(w)))];
 }
 
+/**
+ * Deux titres décrivent-ils le même événement ? Comparaison titre à titre (jamais avec l'union
+ * des titres d'un sujet, qui grossit et attire des articles sans rapport).
+ *  A. forte proportion de mots communs, des deux côtés ;
+ *  B. au moins quatre mots communs (typiquement des noms propres, identiques d'une langue à
+ *     l'autre) ET un territoire commun — permet de réunir des articles FR et EN.
+ */
 export function similar(aTokens, bTokens, aTerr, bTerr) {
   const b = new Set(bTokens);
   const shared = aTokens.filter((t) => b.has(t)).length;
   if (shared < 3) return false;
-  const ratio = shared / Math.min(aTokens.length, bTokens.length);
-  const terrOk = !aTerr.length || !bTerr.length || aTerr.some((t) => bTerr.includes(t));
-  return terrOk && ratio >= 0.6;
+  const min = Math.min(aTokens.length, bTokens.length), max = Math.max(aTokens.length, bTokens.length);
+  const terrShared = aTerr.some((t) => bTerr.includes(t));
+  const terrOk = !aTerr.length || !bTerr.length || terrShared;
+  if (terrOk && shared / min >= 0.6 && shared / max >= 0.3) return true;
+  return shared >= 4 && terrShared && shared / min >= 0.4;
 }
 
 const WEIGHT = { conflict: 15, diplomacy: 15, security: 15, politics: 10, economy: 10, health: 10, environment: 10 };

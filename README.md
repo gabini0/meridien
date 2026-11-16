@@ -54,7 +54,10 @@ curl -X POST localhost:8787/api/admin/stories/12/review -H "Authorization: Beare
 
 ## Limites connues
 
-- **Non testé en conditions réelles** : l'environnement de développement n'avait accès à aucune source. La collecte, le recoupement et l'API sont couverts par des tests sur flux fictifs ; les URL des flux, les requêtes Wikidata/Wikipédia et le module de traduction/synthèse restent à valider au premier lancement connecté (page « Sources et méthode » : état de chaque flux).
+- **Testé sur sources réelles** (novembre 2026) : les 14 flux répondent ; le contexte Wikidata/Wikipédia fonctionne pour pays, régions, villes et relations bilatérales. Wikimedia renvoie parfois « 429 » (trop de requêtes) : le site l'indique et réessaie à la demande suivante. Renseigner `HTTP_USER_AGENT` avec un contact réduit ces refus.
+- **Non testé** : le module de traduction/synthèse (nécessite `ANTHROPIC_API_KEY`).
+- Derrière un proxy HTTP sortant, lancer avec `NODE_USE_ENV_PROXY=1`.
+- L'importance automatique reflète surtout l'étendue de la couverture : un fait divers très repris peut ressortir « Majeur ». La rédaction peut corriger le niveau.
 - Reuters, AP et AFP ne publient pas de flux ouvert : leur ajout suppose une licence.
 - Sans clé de traduction, les titres restent dans la langue de la source (c'est signalé à l'écran). Une lecture intégralement bilingue des actualités nécessite donc ce module ou une rédaction.
 - Les « résumés originaux » et les analyses de relations demandent une rédaction humaine ou la synthèse automatique ; par défaut la plateforme n'affiche que des extraits et des faits sourcés.

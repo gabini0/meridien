@@ -10,7 +10,7 @@
     { "id": "aljazeera", "name": "Al Jazeera", "group": "aljazeera", "homepage": "https://www.aljazeera.com", "country": "QA",
       "feeds": [{ "url": "https://www.aljazeera.com/xml/rss/all.xml", "lang": "en" }] },
     { "id": "dw", "name": "Deutsche Welle", "group": "dw", "homepage": "https://www.dw.com", "country": "DE",
-      "feeds": [{ "url": "https://rss.dw.com/rdf/rss-en-world", "lang": "en" }, { "url": "https://rss.dw.com/rdf/rss-fr-all", "lang": "fr" }] },
+      "feeds": [{ "url": "https://rss.dw.com/rdf/rss-en-world", "lang": "en" }] },
     { "id": "france24", "name": "France 24", "group": "fmm", "homepage": "https://www.france24.com", "country": "FR",
       "feeds": [{ "url": "https://www.france24.com/fr/rss", "lang": "fr" }, { "url": "https://www.france24.com/en/rss", "lang": "en" }] },
     { "id": "rfi", "name": "RFI", "group": "fmm", "homepage": "https://www.rfi.fr", "country": "FR",

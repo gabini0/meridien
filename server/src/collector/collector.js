@@ -26,7 +26,9 @@ export function createCollector({ db, geo, config, sources = loadSources(), fetc
       VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`),
     revise: db.prepare('UPDATE articles SET title=?, excerpt=?, revised_at=?, original_title=COALESCE(original_title, ?), source_updated_at=? WHERE id=?'),
     insAT: db.prepare('INSERT OR IGNORE INTO article_territories (article_id, territory_id) VALUES (?,?)'),
-    recentStories: db.prepare('SELECT id, tokens FROM stories WHERE last_seen >= ? ORDER BY last_seen DESC'),
+    recentStories: db.prepare('SELECT id FROM stories WHERE last_seen >= ? ORDER BY last_seen DESC'),
+    storyTitles: db.prepare('SELECT id, title FROM articles WHERE story_id = ?'),
+    artTerr: db.prepare('SELECT territory_id FROM article_territories WHERE article_id = ?'),
     storyTerr: db.prepare('SELECT territory_id FROM story_territories WHERE story_id = ?'),
     insStory: db.prepare('INSERT INTO stories (first_seen, last_seen, lead_article_id, category, tokens) VALUES (?,?,?,?,?)'),
     setStory: db.prepare('UPDATE articles SET story_id=? WHERE id=?'),
@@ -98,8 +100,11 @@ export function createCollector({ db, geo, config, sources = loadSources(), fetc
     const tk = tokens(title);
     const since = new Date(new Date(published).getTime() - CLUSTER_WINDOW_H * 36e5).toISOString();
     for (const s of q.recentStories.all(since)) {
-      const sTerr = q.storyTerr.all(s.id).map((r) => r.territory_id);
-      if (similar(tk, JSON.parse(s.tokens ?? '[]'), terr, sTerr)) { q.setStory.run(s.id, articleId); return s.id; }
+      for (const art of q.storyTitles.all(s.id)) {
+        if (art.id === articleId) continue;
+        const aTerr = q.artTerr.all(art.id).map((r) => r.territory_id);
+        if (similar(tk, tokens(art.title), terr, aTerr)) { q.setStory.run(s.id, articleId); return s.id; }
+      }
     }
     const { lastInsertRowid } = q.insStory.run(published, published, articleId, category, JSON.stringify(tk));
     q.setStory.run(Number(lastInsertRowid), articleId);

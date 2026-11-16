@@ -20,9 +20,17 @@ export function createContext({ db, config, fetchImpl = fetch }) {
     }
   }
 
-  async function http(url) {
-    const res = await fetchImpl(url, { headers: { 'user-agent': config.userAgent, accept: 'application/json' }, signal: AbortSignal.timeout(config.fetchTimeoutMs) });
+  // Les requêtes vers Wikimedia sont émises une par une, espacées, pour respecter ses limites de débit.
+  let queue = Promise.resolve();
+  const politely = (fn) => { const run = queue.then(fn, fn); queue = run.then(() => new Promise((r) => setTimeout(r, 250)), () => {}); return run; };
+
+  async function http(url, attempt = 0) {
+    const res = await politely(() => fetchImpl(url, { headers: { 'user-agent': config.userAgent, accept: 'application/json' }, signal: AbortSignal.timeout(config.fetchTimeoutMs) }));
     if (res.status === 404) return null;
+    if (res.status === 429 && attempt < 2) { // limitation de débit : on patiente puis on réessaie
+      await new Promise((r) => setTimeout(r, 1500 * (attempt + 1)));
+      return http(url, attempt + 1);
+    }
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     return res.json();
   }
@@ -80,17 +88,21 @@ export function createContext({ db, config, fetchImpl = fetch }) {
     try {
       return await cachedJson(key, async () => {
         const [rel, orgs] = await Promise.all([
-          sparql(`SELECT ?rel ?title WHERE { ?a wdt:P297 "${a.iso2}". ?b wdt:P297 "${b.iso2}". ?rel wdt:P31 wd:Q15221623; wdt:P17 ?a; wdt:P17 ?b.
+          // « optimizer None » impose l'ordre des motifs : sans cela, la requête parcourt tous les éléments liés à un pays et expire.
+          sparql(`SELECT ?rel ?title WHERE { hint:Query hint:optimizer "None".
+            ?a wdt:P297 "${a.iso2}". ?b wdt:P297 "${b.iso2}". ?rel wdt:P31 wd:Q15221623. ?rel wdt:P17 ?a. ?rel wdt:P17 ?b.
             OPTIONAL { ?art schema:about ?rel; schema:isPartOf <https://${lang}.wikipedia.org/>; schema:name ?title. } } LIMIT 1`),
-          sparql(`SELECT DISTINCT ?org ?orgLabel WHERE { ?a wdt:P297 "${a.iso2}". ?b wdt:P297 "${b.iso2}". ?a wdt:P463 ?org. ?b wdt:P463 ?org.
-            SERVICE wikibase:label { bd:serviceParam wikibase:language "${lang},en". } } LIMIT 80`),
+          sparql(`SELECT DISTINCT ?org ?orgLabel WHERE { hint:Query hint:optimizer "None".
+            ?a wdt:P297 "${a.iso2}". ?b wdt:P297 "${b.iso2}". ?a wdt:P463 ?org. ?b wdt:P463 ?org.
+            OPTIONAL { ?org rdfs:label ?l1. FILTER(LANG(?l1) = "${lang}") } OPTIONAL { ?org rdfs:label ?l2. FILTER(LANG(?l2) = "en") }
+            BIND(COALESCE(?l1, ?l2) AS ?orgLabel) FILTER(BOUND(?orgLabel)) } LIMIT 80`),
         ]);
         const r = rel[0];
         return {
           available: true,
           wikidata: r ? { id: r.rel.value.split('/').pop(), url: r.rel.value.replace('http://', 'https://').replace('/entity/', '/wiki/') } : null,
           article: r?.title ? await summary(lang, r.title.value) : null,
-          sharedOrganizations: orgs.map((o) => ({ name: o.orgLabel.value, url: o.org.value.replace('http://', 'https://').replace('/entity/', '/wiki/') })).filter((o) => !/^Q\d+$/.test(o.name)),
+          sharedOrganizations: orgs.map((o) => ({ name: o.orgLabel.value, url: o.org.value.replace('http://', 'https://').replace('/entity/', '/wiki/') })).sort((x, y) => x.name.localeCompare(y.name, lang)),
           fetchedAt: new Date().toISOString(),
         };
       });
