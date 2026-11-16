@@ -1,6 +1,11 @@
 import { useEffect, useRef } from 'react';
-import maplibregl, { type Map as MlMap, type GeoJSONSource } from 'maplibre-gl';
+import * as maplibregl from 'maplibre-gl';
+import type { Map as MlMap, GeoJSONSource } from 'maplibre-gl';
+import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url';
 import 'maplibre-gl/dist/maplibre-gl.css';
+
+// Depuis MapLibre 6, le worker est un fichier séparé : il est servi depuis notre propre origine.
+maplibregl.setWorkerUrl(workerUrl);
 import { Gazetteer, greatCircle, type Place } from './geo';
 import { useI18n } from './i18n';
 
