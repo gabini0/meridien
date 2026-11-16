@@ -5,9 +5,10 @@ import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url';
 import 'maplibre-gl/dist/maplibre-gl.css';
 
 // Depuis MapLibre 6, le worker est un fichier séparé : il est servi depuis notre propre origine.
-maplibregl.setWorkerUrl(workerUrl);
+maplibregl.setWorkerUrl(new URL(workerUrl, document.baseURI).href);
 import { Gazetteer, greatCircle, type Place } from './geo';
 import { useI18n } from './i18n';
+import { geoUrl } from './snapshot';
 
 export interface Activity { id: string; stories: number; topLevel: string }
 interface Props {
@@ -94,7 +95,7 @@ export default function MapView({ gaz, a, b, activity, focus, onPick, padRight, 
     (window as any).__map = m;
     m.addControl(new maplibregl.AttributionControl({ compact: true, customAttribution: 'Natural Earth · GeoNames' }), 'bottom-left');
     m.on('load', () => {
-      m.addSource('countries', { type: 'geojson', data: '/api/geo/countries.geojson', promoteId: 'tid', tolerance: 0.25 });
+      m.addSource('countries', { type: 'geojson', data: new URL(geoUrl('countries.geojson'), document.baseURI).href, promoteId: 'tid', tolerance: 0.25 });
       m.addLayer({ id: 'land', type: 'fill', source: 'countries', paint: {
         'fill-color': ['case', ['==', ['feature-state', 'sel'], 1], '#6b5220', ['==', ['feature-state', 'sel'], 2], '#234e6d', ['boolean', ['feature-state', 'hover'], false], C.landHi, C.land] } });
       m.addLayer({ id: 'borders', type: 'line', source: 'countries', paint: {

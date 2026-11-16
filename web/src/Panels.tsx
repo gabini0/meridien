@@ -79,7 +79,7 @@ export function TerritoryPanel({ id, period, setPeriod, category, setCategory, s
         )}
         {tab === 'context' && (<>
           {ctx.loading && <p className="muted">{t('loading')}</p>}
-          {ctx.data && !ctx.data.available && <p className="notice">{t(ctx.data.reason === 'not_found' || ctx.data.reason === 'unsupported' ? 'ctx.not_found' : 'ctx.unavailable')}</p>}
+          {ctx.data && !ctx.data.available && <p className="notice">{t(ctx.data.reason === 'snapshot' ? 'ctx.snapshot' : ctx.data.reason === 'not_found' || ctx.data.reason === 'unsupported' ? 'ctx.not_found' : 'ctx.unavailable')}</p>}
           {ctx.error && <p className="notice">{t('ctx.unavailable')}</p>}
           {ctx.data?.available && (<>
             {ctx.data.stale && <p className="notice">{t('ctx.stale')}</p>}
@@ -146,7 +146,7 @@ export function RelationPanel({ a, b, status, onPick, onClose }: { a: string; b:
             <h3>{t('rel.context')}</h3>
             {d.contextScope && <p className="muted">{t('rel.contextScope', { a: d.contextScope.a.name, b: d.contextScope.b.name })}</p>}
             {d.context.available ? (d.context.article ? <WikiBlock title={d.context.article.title} w={d.context.article} /> : <p className="notice">{t('rel.noArticle')}</p>)
-              : <p className="notice">{t(d.context.reason === 'unsupported' ? 'rel.noArticle' : 'ctx.unavailable')}</p>}
+              : <p className="notice">{t(d.context.reason === 'snapshot' ? 'ctx.snapshot' : d.context.reason === 'unsupported' ? 'rel.noArticle' : 'ctx.unavailable')}</p>}
           </section>
           <section>
             <h3>{t('rel.news')}</h3>

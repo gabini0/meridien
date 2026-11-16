@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "build:snapshot": "VITE_SNAPSHOT=1 vite build"
   },
   "dependencies": {
     "maplibre-gl": "^6.18.0",

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { Lang } from './i18n';
+import { SNAPSHOT, snapApi } from './snapshot';
 
 export type Period = 'today' | 'week' | 'month';
 export interface Brief { id: string; type: 'continent' | 'country' | 'region' | 'city'; name: string; lon: number | null; lat: number | null; country: string | null }
@@ -22,6 +23,9 @@ export interface Status { articles: number; stories: number; lastSuccessfulColle
 export class ApiError extends Error { constructor(public status: number, public code: string) { super(code); } }
 
 export async function api<T>(path: string, init?: RequestInit): Promise<T> {
+  if (SNAPSHOT) {
+    try { return (await snapApi(path, init)) as T; } catch (e: any) { throw new ApiError(e?.status ?? 0, e?.code ?? 'network'); }
+  }
   const res = await fetch(`/api${path}`, init);
   let body: any = null;
   try { body = await res.json(); } catch { /* réponse non JSON */ }

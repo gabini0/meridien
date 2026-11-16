@@ -187,3 +187,5 @@ code { font-size: 12px; background: var(--surface2); padding: 1px 5px; border-ra
   .hero { padding: 32px 0 20px; }
   .facts .row { grid-template-columns: 110px 1fr; }
 }
+
+.snap-banner { margin: 0; padding: 8px 18px; background: var(--surface2); border-bottom: 1px solid var(--line); color: var(--accent); font-size: 13px; text-align: center; }

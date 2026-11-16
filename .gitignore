@@ -3,3 +3,5 @@ dist
 server/data/*.db*
 server/data/geo
 .env
+web/public-snapshot
+web/dist-snapshot

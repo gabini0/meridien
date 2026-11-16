@@ -5,10 +5,14 @@ import { I18n, fmtDateTime, makeT, useI18n, type Key, type Lang } from './i18n';
 import MapView, { type Activity } from './MapView';
 import { RelationPanel, TerritoryPanel } from './Panels';
 import { CategoryFilter, PeriodTabs, StoryFeed } from './Stories';
+import { SNAPSHOT, geoUrl, snapshotDate } from './snapshot';
 
 type Route = { view: 'home' | 'map' | 'sources'; a: string | null; b: string | null };
+// La route vit en mémoire et n'est recopiée dans l'URL que hors instantané : certains hébergements
+// (pages embarquées) n'acceptent pas les adresses de la forme #/chemin?paramètres.
+let currentHash = SNAPSHOT ? '#/' : location.hash;
 function parseHash(): Route {
-  const [path, query = ''] = location.hash.replace(/^#/, '').split('?');
+  const [path, query = ''] = currentHash.replace(/^#/, '').split('?');
   const p = new URLSearchParams(query);
   const view = path.startsWith('/map') ? 'map' : path.startsWith('/sources') ? 'sources' : 'home';
   return { view, a: p.get('a'), b: p.get('b') };
@@ -113,17 +117,35 @@ export default function App() {
   const activity = useApi<Activity[]>(`/map/activity${qs({ period, category })}`);
   const n = useRef(0);
 
-  useEffect(() => { const h = () => setRoute(parseHash()); window.addEventListener('hashchange', h); return () => window.removeEventListener('hashchange', h); }, []);
+  const [snapDate, setSnapDate] = useState<string | null>(null);
+  useEffect(() => { if (SNAPSHOT) snapshotDate().then(setSnapDate).catch(() => {}); }, []);
+  useEffect(() => {
+    const go = (hash: string) => { currentHash = hash; setRoute(parseHash()); };
+    (window as any).__nav = go;
+    const onHash = () => { if (!SNAPSHOT) go(location.hash); };
+    // Les liens internes (#/…) sont pris en charge ici pour fonctionner aussi sans gestion d'URL.
+    const onClick = (e: MouseEvent) => {
+      const a = (e.target as HTMLElement).closest?.('a[href^="#/"]') as HTMLAnchorElement | null;
+      if (!a || e.defaultPrevented || e.metaKey || e.ctrlKey) return;
+      e.preventDefault(); nav(a.getAttribute('href')!);
+    };
+    window.addEventListener('hashchange', onHash); document.addEventListener('click', onClick);
+    return () => { window.removeEventListener('hashchange', onHash); document.removeEventListener('click', onClick); };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { const h = () => setWide(window.innerWidth >= 900); window.addEventListener('resize', h); return () => window.removeEventListener('resize', h); }, []);
   useEffect(() => { document.documentElement.lang = lang; document.title = `Méridien — ${t('nav.tagline')}`; try { localStorage.setItem('lang', lang); } catch { /* stockage indisponible */ } }, [lang, t]);
   useEffect(() => { try { localStorage.setItem('period', period); } catch { /* idem */ } }, [period]);
   const loadGeo = useCallback(() => {
     setGeoError(false);
-    fetch('/api/geo/search-index.json').then((r) => { if (!r.ok) throw new Error(); return r.json(); }).then((raw) => setGaz(new Gazetteer(raw))).catch(() => setGeoError(true));
+    fetch(geoUrl('search-index.json')).then((r) => { if (!r.ok) throw new Error(); return r.json(); }).then((raw) => setGaz(new Gazetteer(raw))).catch(() => setGeoError(true));
   }, []);
   useEffect(loadGeo, [loadGeo]);
 
-  const nav = (hash: string) => { location.hash = hash; };
+  const nav = (hash: string) => {
+    currentHash = hash; setRoute(parseHash());
+    if (!SNAPSHOT) { try { if (location.hash !== hash) location.hash = hash; } catch { /* URL non modifiable */ } }
+    if (!hash.startsWith('#/map')) window.scrollTo(0, 0);
+  };
   const fly = (id: string) => setFocus({ id, n: ++n.current });
 
   /** Sélection d'un territoire (carte, recherche, liens) ; en mode liaison, complète la paire. */
@@ -156,6 +178,7 @@ export default function App() {
           </div>
         </header>
 
+        {SNAPSHOT && snapDate && route.view !== 'map' && <p className="snap-banner">{t('snap.banner', { d: fmtDateTime(snapDate, lang) })}</p>}
         {route.view === 'home' && (
           <main className="home">
             <section className="hero">
