@@ -1,0 +1,21 @@
+{
+  "_comment": "Exonymes français de grandes villes (clé: nom GeoNames|code pays). Sert à la recherche et au géo-étiquetage des articles en français.",
+  "London|GB": "Londres", "Beijing|CN": "Pékin", "Moscow|RU": "Moscou", "Warsaw|PL": "Varsovie",
+  "Lisbon|PT": "Lisbonne", "Athens|GR": "Athènes", "Cairo|EG": "Le Caire", "Brussels|BE": "Bruxelles",
+  "Copenhagen|DK": "Copenhague", "Edinburgh|GB": "Édimbourg", "Geneva|CH": "Genève", "Barcelona|ES": "Barcelone",
+  "Seoul|KR": "Séoul", "Tehran|IR": "Téhéran", "Baghdad|IQ": "Bagdad", "Damascus|SY": "Damas",
+  "Jerusalem|IL": "Jérusalem", "Kyiv|UA": "Kiev", "Havana|CU": "La Havane", "Algiers|DZ": "Alger",
+  "Bucharest|RO": "Bucarest", "Cape Town|ZA": "Le Cap", "Addis Ababa|ET": "Addis-Abeba", "Beirut|LB": "Beyrouth",
+  "Riyadh|SA": "Riyad", "Kabul|AF": "Kaboul", "Vienna|AT": "Vienne", "Venice|IT": "Venise",
+  "The Hague|NL": "La Haye", "Antwerp|BE": "Anvers", "Cologne|DE": "Cologne", "Munich|DE": "Munich",
+  "Hamburg|DE": "Hambourg", "Saint Petersburg|RU": "Saint-Pétersbourg", "Shanghai|CN": "Shanghaï",
+  "Mexico City|MX": "Mexico", "New Orleans|US": "La Nouvelle-Orléans", "Aleppo|SY": "Alep", "Mosul|IQ": "Mossoul",
+  "Tripoli|LY": "Tripoli", "Nairobi|KE": "Nairobi", "Kharkiv|UA": "Kharkiv", "Odesa|UA": "Odessa",
+  "Guangzhou|CN": "Canton", "Mumbai|IN": "Bombay", "Kolkata|IN": "Calcutta", "Ho Chi Minh City|VN": "Hô Chi Minh-Ville",
+  "Phnom Penh|KH": "Phnom Penh", "Singapore|SG": "Singapour", "Dublin|IE": "Dublin", "Lagos|NG": "Lagos",
+  "Naples|IT": "Naples", "Milan|IT": "Milan", "Turin|IT": "Turin", "Florence|IT": "Florence", "Genoa|IT": "Gênes",
+  "Seville|ES": "Séville", "Krakow|PL": "Cracovie", "Thessaloniki|GR": "Thessalonique", "Istanbul|TR": "Istanbul",
+  "Doha|QA": "Doha", "Dubai|AE": "Dubaï", "Abu Dhabi|AE": "Abou Dabi", "Sanaa|YE": "Sanaa", "Khartoum|SD": "Khartoum",
+  "Mogadishu|SO": "Mogadiscio", "Belgrade|RS": "Belgrade", "Tbilisi|GE": "Tbilissi", "Yerevan|AM": "Erevan",
+  "Baku|AZ": "Bakou", "Tashkent|UZ": "Tachkent", "Almaty|KZ": "Almaty", "Minsk|BY": "Minsk"
+}

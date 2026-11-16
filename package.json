@@ -1,0 +1,14 @@
+{
+  "name": "meridien",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": ["server", "web"],
+  "scripts": {
+    "build:geo": "npm run build:geo -w server",
+    "dev:server": "npm run dev -w server",
+    "dev:web": "npm run dev -w web",
+    "build": "npm run build:geo && npm run build -w web",
+    "start": "npm run start -w server",
+    "test": "npm test -w server"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "_comment": "Registre des sources. 'group' identifie le groupe éditorial : deux titres d'un même groupe ne comptent que pour une source lors du recoupement. Reuters, AP et AFP ne proposent pas de flux public ouvert : leur intégration suppose un contrat de licence (voir README).",
+  "sources": [
+    { "id": "bbc", "name": "BBC News", "group": "bbc", "homepage": "https://www.bbc.com/news", "country": "GB",
+      "feeds": [{ "url": "https://feeds.bbci.co.uk/news/world/rss.xml", "lang": "en" }] },
+    { "id": "guardian", "name": "The Guardian", "group": "guardian", "homepage": "https://www.theguardian.com/world", "country": "GB",
+      "feeds": [{ "url": "https://www.theguardian.com/world/rss", "lang": "en" }] },
+    { "id": "nyt", "name": "The New York Times", "group": "nyt", "homepage": "https://www.nytimes.com/section/world", "country": "US",
+      "feeds": [{ "url": "https://rss.nytimes.com/services/xml/rss/nyt/World.xml", "lang": "en" }] },
+    { "id": "aljazeera", "name": "Al Jazeera", "group": "aljazeera", "homepage": "https://www.aljazeera.com", "country": "QA",
+      "feeds": [{ "url": "https://www.aljazeera.com/xml/rss/all.xml", "lang": "en" }] },
+    { "id": "dw", "name": "Deutsche Welle", "group": "dw", "homepage": "https://www.dw.com", "country": "DE",
+      "feeds": [{ "url": "https://rss.dw.com/rdf/rss-en-world", "lang": "en" }, { "url": "https://rss.dw.com/rdf/rss-fr-all", "lang": "fr" }] },
+    { "id": "france24", "name": "France 24", "group": "fmm", "homepage": "https://www.france24.com", "country": "FR",
+      "feeds": [{ "url": "https://www.france24.com/fr/rss", "lang": "fr" }, { "url": "https://www.france24.com/en/rss", "lang": "en" }] },
+    { "id": "rfi", "name": "RFI", "group": "fmm", "homepage": "https://www.rfi.fr", "country": "FR",
+      "feeds": [{ "url": "https://www.rfi.fr/fr/rss", "lang": "fr" }] },
+    { "id": "lemonde", "name": "Le Monde", "group": "lemonde", "homepage": "https://www.lemonde.fr/international/", "country": "FR",
+      "feeds": [{ "url": "https://www.lemonde.fr/international/rss_full.xml", "lang": "fr" }] },
+    { "id": "franceinfo", "name": "Franceinfo", "group": "francetv", "homepage": "https://www.franceinfo.fr/monde/", "country": "FR",
+      "feeds": [{ "url": "https://www.francetvinfo.fr/monde.rss", "lang": "fr" }] },
+    { "id": "ft", "name": "Financial Times", "group": "ft", "homepage": "https://www.ft.com/world", "country": "GB",
+      "feeds": [{ "url": "https://www.ft.com/world?format=rss", "lang": "en" }] },
+    { "id": "npr", "name": "NPR", "group": "npr", "homepage": "https://www.npr.org/sections/world/", "country": "US",
+      "feeds": [{ "url": "https://feeds.npr.org/1004/rss.xml", "lang": "en" }] },
+    { "id": "un", "name": "ONU Info / UN News", "group": "un", "homepage": "https://news.un.org", "country": null, "primary": true,
+      "feeds": [{ "url": "https://news.un.org/feed/subscribe/en/news/all/rss.xml", "lang": "en" }, { "url": "https://news.un.org/feed/subscribe/fr/news/all/rss.xml", "lang": "fr" }] }
+  ]
+}

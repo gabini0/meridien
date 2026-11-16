@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:media="http://search.yahoo.com/mrss/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<channel><title>Fixture A</title>
+<item><title>Testland and Examplia sign border treaty in Geneva talks</title><link>https://a.test/treaty</link>
+<description><![CDATA[<p>Negotiators from France and Germany &amp; observers attended the <b>summit</b>.</p>]]></description>
+<pubDate>NOW_RFC</pubDate><dc:creator>Fixture Desk</dc:creator><category>World</category>
+<media:thumbnail url="https://a.test/img.jpg" width="240"/></item>
+<item><title>Minister says budget talks will continue</title><link>https://a.test/budget</link><description>Statement fixture about Japan.</description><pubDate>NOW_RFC</pubDate></item>
+<item><title>No link item</title><description>dropped</description></item>
+</channel></rss>
